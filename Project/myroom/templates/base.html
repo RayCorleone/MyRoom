@@ -1,0 +1,134 @@
+{% from 'bootstrap4/nav.html' import render_nav_item %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block head %}
+        <title>{% block title %}{% endblock %} - MyRoom</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        {% block styles %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='open-iconic/font/css/open-iconic-bootstrap.css') }}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        {% endblock styles %}
+    {% endblock head %}
+</head>
+
+<body>
+
+<!--导航栏-->
+{% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+
+            <!--左上角图表-->
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='logo.png') }}" width="200px" height="auto" alt="MyRoom">
+            </a>
+
+            <!--导航栏下拉框-->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+                    aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!--导航栏的导航项-->
+            <div class="collapse navbar-collapse" id="navbarColor01">
+
+                <!--不变的导航项（Search\Book\Estimate）-->
+                <div class="navbar-nav mr-auto" style="font-size: 17px;">
+                    {{ render_nav_item('search.index', '信息搜索') }}
+                    {{ render_nav_item('booking.index', '教室借用') }}
+                    {{ render_nav_item('admin.index', '审核管理') }}
+                </div>
+
+                <!--可变的导航项-->
+                <div class="navbar-nav ml-auto">
+                    <!--登录时的展示-->
+                    {% if current_user.is_authenticated %}
+                        <div class="dropdown nav-item">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                <img class="avatar-xs"
+                                    src="{{ url_for('static', filename='user.ico') }}">
+                                <span class="caret"></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                <h6 class="dropdown-header">Welcome, {{ current_user.number }}</h6>
+                                <a class="dropdown-item" href="{{ url_for('user.index') }}">
+                                    <span class="oi oi-person"></span> 个人中心
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <span class="oi oi-power-standby"></span> 退出
+                                </a>
+                            </div>
+                        </div>
+                    
+                    <!--游客时的展示-->
+                    {% else %}
+                        <a class="btn btn-outline-primary" href="{{ url_for('auth.login') }}">登 录</a>&nbsp;&nbsp;
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+<!--主体部分-->
+<main>
+    <div class="container">
+        <!--闪现信息提示-->
+        {% for message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{ message[0] }}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message[1] }}
+            </div>
+        {% endfor %}
+
+        <!--主体代码-->
+        {% block content %}
+            <!--(有待填充)-->
+        {% endblock %}
+
+        <!--页尾部分-->
+        {% block footer %}
+            <footer>
+                <p class="float-left">
+                    <small>&copy; 2022
+                        <a href="https://github.com/RayCorleone" title="Written by Ray">RayHuC</a> -
+                        <a href="https://github.com/RayCorleone" title="Follow me on GitHub">GitHub</a> -
+                        <a href="https://github.com/RayCorleone/myroom" title="Foke this on GitHub">MyRoom</a>
+                    </small>
+                </p>
+                <p class="float-right">
+                    <small>Make Classrooms Great Again.</small>
+                </p>
+            </footer>
+        {% endblock %}
+    </div>
+</main>
+
+<!--？？？-->
+<div id="toast"></div>
+
+<!--脚本导入部分-->
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+        {% if current_user.is_authenticated %}
+            var is_authenticated = true;
+        {% else %}
+            var is_authenticated = false;
+        {% endif %}
+    </script>
+{% endblock %}
+</body>
+</html>

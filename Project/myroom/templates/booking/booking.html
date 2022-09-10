@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% from 'bootstrap4/form.html' import render_form %}
+{% from 'bootstrap4/pagination.html' import render_pagination %}
+
+{% block title %}Booking{% endblock %}
+
+{% block content %}
+    <!--渲染表单-->
+    <div class="card w-100 bg-light">
+        <h4 class="card-header">
+            新的申请
+        </h4>
+
+        <div class="card-body" style="margin-bottom: -20px;">
+            <form method ="post">
+                {{form.csrf_token}}
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.use_date.label(class='mr-sm-2')}}
+                            {{form.use_date(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            {{form.s_time.label(class='mr-sm-2')}}
+                            {{form.s_time(class='form-control mb-2 mr-sm-2')}}
+                            {% if form.s_time.errors %}
+                                {% for error in form.s_time.errors %}
+                                    <small style="color: red;">{{error}}</small><br>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            {{form.e_time.label(class='mr-sm-2')}}
+                            {{form.e_time(class='form-control mb-2 mr-md-2')}}
+                            {% if form.e_time.errors %}
+                                {% for error in form.e_time.errors %}
+                                    <small style="color: red;">{{error}}</small><br>
+                                {% endfor %}
+                            {% endif %}
+                       </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            {{form.b_name.label(class='mr-sm-2')}}
+                            {{form.b_name(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            {{form.r_num.label(class='mr-sm-2')}}
+                            {{form.r_num(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-11">
+                        <div class="form-group">
+                            {{form.note.label(class='mr-sm-2')}}
+                            {{form.note(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 55px;">
+                        <div class="form-group">
+                            {{form.submit(class="btn btn-primary mb-2")}}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <br>
+
+    <!--管理个人申请-->
+    <div class="card w-100">
+        <div class="card-header">
+            <h4>我的申请
+                <small class="text-muted">{{ pagination.total }}</small>
+            </h4>
+        </div>
+
+        <div class="card-body" style="margin-bottom: -30px;">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.args.get('filter', 'all') == 'all' %}active{% endif %}"
+                    href="{{ url_for('booking.index', filter='all') }}">全部</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.args.get('filter') == 'reviewed' %}active{% endif %}"
+                    href="{{ url_for('booking.index', filter='reviewed') }}">已审核 {% if reviewed_applications %}<span
+                            class="badge badge-success">{{ reviewed_applications }}</span>{% endif %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.args.get('filter') == 'waiting' %}active{% endif %}"
+                    href="{{ url_for('booking.index', filter='waiting') }}">未审核</a>
+                </li>
+            </ul>
+
+            {% if events %}
+                <table class="table table-striped midtable">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>使用日期</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>教学楼</th>
+                        <th>教室号</th>
+                        <th>审核状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    {% for event in events %}
+                        <tr {% if event.is_rejected %}class="table-warning" {% endif %}
+                            {% if event.is_passed %}class="table-success" {% endif %}>
+                            <td>{{ loop.index + ((pagination.page - 1) * 10) }}</td>
+                            <td>{{ event.date }}</td>
+                            <td>{{ event.start_time }}</td>
+                            <td>{{ event.finish_time }}</td>
+                            <td>{{ event.room.building.name }}</td>
+                            <td>{{ event.room.number }}</td>
+                            <td>
+                                {% if not event.estimated %}未审核
+                                {% else %}
+                                    {% if event.is_passed %}已通过
+                                    {% else %}未通过
+                                    {% endif%}
+                                {% endif %}</td>
+                            <td>
+                                {% if not event.estimated %}
+                                    <form class="inline" method="post"
+                                        action="{{ url_for('.delete_event', event_id=event.id, next=request.full_path) }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('确认删除?');">删除
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="page-footer my-page-footer">{{ render_pagination(pagination) }}</div>
+            {% else %}
+                <div class="tip" style="margin-bottom: 30px;"><h5>暂无申请</h5></div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

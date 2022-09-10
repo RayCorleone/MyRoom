@@ -1,0 +1,128 @@
+{% extends 'search/base.html' %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block title %}Search All{% endblock %}
+
+{% block search_content %}
+<div class="container">
+    <!--渲染表单-->
+    <div class="card w-100 bg-light">
+        <div class="card-body" style="margin-bottom: -20px;">
+            <form method ="post">
+                {{form.csrf_token}}
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.b_name.label(class='mr-sm-2')}}
+                            {{form.b_name(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.type.label(class='mr-sm-2')}}
+                            {{form.type(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.size.label(class='mr-sm-2')}}
+                            {{form.size(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.r_num.label(class='mr-sm-2')}}
+                            {{form.r_num(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.date.label(class='mr-sm-2')}}
+                            {{form.date(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.s_time.label(class='mr-sm-2')}}
+                            {{form.s_time(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.e_time.label(class='mr-sm-2')}}
+                            {{form.e_time(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 30px;">
+                        <div class="form-group">
+                            {{form.submit(class="btn btn-primary")}}
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 30px;">
+                        <a class="btn btn-info btn-primary"  href="{{ url_for('booking.index') }}">借用</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    <!--结果列表-->
+    {% if room_info %}
+        <table class="table table-striped midtable">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>校区</th>
+                <th>楼名</th>
+                <th>教室号</th>
+                <th>类型</th>
+                <th>容量</th>
+                <th>状态</th>
+            </tr>
+            </thead>
+            {% if not flag %}
+                {% for info in room_info %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ info.building.location }}</td>
+                        <td>{{ info.building.name }}</td>
+                        <td>{{ info.number }}</td>
+                        <td>{{ form.type.data }}</td>
+                        <td>{{ info.size }}</td>
+                        <td width="150px">-</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for i in range(0,room_use[-1]) %}
+                    <tr {% if room_use[i] == 1 %}class="table-warning"  {% endif %}
+                        {% if room_use[i] == 2 %}class="table-info"     {% endif %}>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ room_info[i].building.location }}</td>
+                        <td>{{ room_info[i].building.name }}</td>
+                        <td>{{ room_info[i].number }}</td>
+                        <td>{{ form.type.data }}</td>
+                        <td>{{ room_info[i].size }}</td>
+                        <td width="150px">
+                            {% if room_use[i] == 0 %}
+                                <a style="color: rgb(0, 149, 255);" href="{{ url_for('booking.index') }}">空闲</a>
+                            {% else %}
+                                {% if room_use[i] == 1 %}
+                                    <a style="color: black;">借出</a>
+                                {% else %}
+                                    <a style="color: black;">课程</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+</table>
+    {% else %}
+        <div class="tip" style="margin-bottom: 30px;"><h5>无结果</h5></div>
+    {% endif %}
+</div>
+{% endblock %}

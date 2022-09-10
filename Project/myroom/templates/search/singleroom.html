@@ -1,0 +1,75 @@
+{% extends 'search/base.html' %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block title %}Search Room{% endblock %}
+
+{% block search_content %}
+<div class="container">
+    <!--渲染表单-->
+    <div class="card w-100 bg-light">
+        <div class="card-body" style="margin-bottom: -20px;">
+            <form method ="post">
+                {{form.csrf_token}}
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.name.label(class='mr-sm-2')}}
+                            {{form.name(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.number.label(class='mr-sm-2')}}
+                            {{form.number(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.week.label(class='mr-sm-2')}}
+                            {{form.week(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 30px;">
+                        <div class="form-group">
+                            {{form.submit(class="btn btn-primary")}}
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 30px;">
+                        <a class="btn btn-info btn-primary"  href="{{ url_for('booking.index') }}">借用</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    <!--结果列表-->
+    <table class = "table table-bordered midtable">
+        <thead><tr>
+            <th>时间段</th>
+            <th>星期一</th>
+            <th>星期二</th>
+            <th>星期三</th>
+            <th>星期四</th>
+            <th>星期五</th>
+            <th>星期六</th>
+            <th>星期日</th>
+        <tr></thead>
+        <tbody>
+                {% for line in class_info %}
+                <tr>
+                    <td width="115" height="60">{{ line[0] }}</td>
+                    {% for i in range(1,8) %}
+                        {% if line[i] == 0 %}
+                            <td width="110" height="60"></td>
+                        {% else %}
+                            <td width="110" height="60" style="color: rgb(16, 48, 1);">{{line[i].name}}</td>
+                        {%endif%}
+                    {%endfor%}
+                <tr>
+                {%endfor%}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

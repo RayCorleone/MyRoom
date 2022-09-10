@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% from 'bootstrap4/nav.html' import render_nav_item %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-2">
+            <div class="nav nav-pills flex-column" role="tablist" aria-orientation="vertical">
+                {{ render_nav_item('user.index', '个人资料') }}
+                {{ render_nav_item('user.change_pwd', '修改密码') }}
+            </div>
+        </div>
+        <div class="col-md-10">
+            {% block user_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

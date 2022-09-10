@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% from 'bootstrap4/nav.html' import render_nav_item %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-2">
+            <div class="nav nav-pills flex-column" role="tablist" aria-orientation="vertical">
+                {{ render_nav_item('search.index', '单个教室搜索') }}
+                {{ render_nav_item('search.search_class', '课程教室查询') }}
+                {{ render_nav_item('search.search_all', '所有教室筛选') }}
+            </div>
+        </div>
+        <div class="col-md-10">
+            {% block search_content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

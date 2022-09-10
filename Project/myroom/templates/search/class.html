@@ -1,0 +1,84 @@
+{% extends 'search/base.html' %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block title %}Search Class{% endblock %}
+
+{% block search_content %}
+<div class="container">
+    <!--渲染表单-->
+    <div class="card w-100 bg-light">
+        <div class="card-body" style="margin-bottom: -20px;">
+            <form method ="post">
+                {{form.csrf_token}}
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            {{form.type.label(class='mr-sm-2')}}
+                            {{form.type(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.num.label(class='mr-sm-2')}}
+                            {{form.num(class='form-control mb-2 mr-sm-2')}}
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            {{form.c_name.label(class='mr-sm-2')}}
+                            {{form.c_name(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            {{form.t_name.label(class='mr-sm-2')}}
+                            {{form.t_name(class='form-control mb-2 mr-md-2')}}
+                       </div>
+                    </div>
+                    <div class="col-sm-1" style="margin-top: 30px;">
+                        <div class="form-group">
+                            {{form.submit(class="btn btn-primary")}}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    <!--结果列表-->
+    {% if class_info %}
+        <table class="table table-striped midtable">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>课号</th>
+                <th>课名</th>
+                <th>教师</th>
+                <th>校区</th>
+                <th>楼名</th>
+                <th>教室号</th>
+                <th>星期</th>
+                <th>时间段</th>
+            </tr>
+            </thead>
+            {% for info in class_info %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ info.course.number }}</td>
+                    <td>{{ info.course.name }}</td>
+                    <td>{{ info.user.name }}</td>
+                    <td>{{ info.room.building.location }}</td>
+                    <td>{{ info.room.building.name }}</td>
+                    <td>{{ info.room.number }}</td>
+                    <td>{{ info.weekday }}</td>
+                    <td>{{ info.start_time }}-{{ info.finish_time }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="tip" style="margin-bottom: 30px;"><h5>无结果</h5></div>
+    {% endif %}
+</div>
+{% endblock %}

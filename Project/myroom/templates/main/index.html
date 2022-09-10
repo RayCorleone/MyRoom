@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+    <!--用户已经登录时-->
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-8">
+                <img src="{{ url_for('static', filename='images/main_index1.png') }}" class="rounded img-fluid">
+            </div>
+            <div class="col-md-4 align-self-center">
+                <div style="margin-left: -40px; margin-bottom: -20px;">
+                    <img src="{{ url_for('static', filename='images/logo_text.png') }}" width="400px" height="auto" alt="MyRoom">
+                </div>
+                <div class="main_index_text">
+                    <p>我们的教室</p>
+                    <p>还可以更加鲜活</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <!--用户未登录时-->
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-8">
+                <img src="{{ url_for('static', filename='images/main_index1.png') }}" class="rounded img-fluid">
+            </div>
+            <div class="col-md-4 align-self-center">
+                <div style="margin-left: -40px; margin-bottom: -20px;">
+                    <img src="{{ url_for('static', filename='images/logo_text.png') }}" width="400px" height="auto" alt="MyRoom">
+                </div>
+                <div class="main_index_text">
+                    <p>我们的教室</p>
+                    <p>还可以更加鲜活</p>
+                </div>
+                <p><a class="btn btn-primary btn-lg" href="{{ url_for('auth.login') }}">即刻登录</a></p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

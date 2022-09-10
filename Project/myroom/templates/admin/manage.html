@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% from 'bootstrap4/pagination.html' import render_pagination %}
+
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+    <!--管理全部申请-->
+    <div class="page-header">
+        <h2>全部申请
+            <small class="text-muted">{{ pagination.total }}</small>
+        </h2><br>
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('filter', 'all') == 'all' %}active{% endif %}"
+                   href="{{ url_for('admin.index', filter='all') }}">全部</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('filter') == 'waiting' %}active{% endif %}"
+                   href="{{ url_for('admin.index', filter='waiting') }}">未审核</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.args.get('filter') == 'reviewed' %}active{% endif %}"
+                   href="{{ url_for('admin.index', filter='reviewed') }}">已审核 {% if reviewed_applications %}<span
+                        class="badge badge-success">{{ reviewed_applications }}</span>{% endif %}</a>
+            </li>
+        </ul>
+    </div>
+
+    {% if events %}
+        <table class="table table-striped midtable">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>时间</th>
+                <th>教室</th>
+                <th>申请人</th>
+                <th>备注</th>
+                <th>审核状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            {% for event in events %}
+                <tr {% if event.is_rejected %}class="table-warning" {% endif %}
+                    {% if event.is_passed %}class="table-success" {% endif %}>
+                    <td>{{ loop.index + ((pagination.page - 1) * 20) }}</td>
+                    <td>{{ event.date }}<br>{{ event.start_time }}~{{ event.finish_time }}</td>
+                    <td>{{ event.room.building.name }}<br>{{ event.room.number }}</td>
+                    <td>{{ event.user.number }}<br>{{event.user.name}}<br>{{event.user.type}}</td>
+                    <td width="230">{{ event.note }}</td>
+                    <td>
+                        {% if not event.estimated %}未审核
+                        {% else %}
+                            {% if event.is_passed %}已通过
+                            {% else %}未通过
+                            {% endif%}
+                        {% endif %}</td>
+                    <td>
+                        {% if not event.estimated %}
+                            <form class="inline" method="post"
+                                action="{{ url_for('.approve_event', event_id=event.id, next=request.full_path) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="btn btn-success btn-sm">通过</button>
+                            </form>
+
+                            <form class="inline" method="post"
+                                action="{{ url_for('.reject_event', event_id=event.id, next=request.full_path) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="btn btn-danger btn-sm">不通过</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="page-footer" style="margin-top: -40px; float:right;">{{ render_pagination(pagination) }}</div>
+        <br><br>
+    {% else %}
+        <div class="tip"><h5>暂无申请</h5></div>
+    {% endif %}
+
+{% endblock %}
