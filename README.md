@@ -22,6 +22,19 @@
 
 <br/>
 
+### 程序运行
+
+1. 将项目完整的克隆到一个文件夹（`git clone` 到一个文件夹）；
+2. cd 到 `Project 文件夹`, 执行 `pipenv sync --dev`, 安装虚拟环境；
+3. 执行 `pipenv shell` 启动虚拟环境；
+4. 执行 `flask initdb` 初始化数据库, 接着执行 `flask initdata` 创建虚拟数据；
+5. 执行 `flask run` 启动网页；
+6. 管理账号：1952100 - password；师生账号：(在 *data-dev.db* 里看) - 20220310
+
+P.S. 开发时库版本都在 *Pipfile.lock* 中，2023 年 4 月测试时部分库已更新，不 sync 会有 bug.
+
+<br/>
+
 ### 不太重要的说明
 
 - 该项目的资料和课程作业都是 **Free** 的，发到邮箱的我都会回复的:smile:
